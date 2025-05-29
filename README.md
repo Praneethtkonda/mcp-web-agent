@@ -1,4 +1,19 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MCP Web Agent
+
+This is a [Next.js](https://nextjs.org) project that integrates Model Context Protocol (MCP) clients as tools with Large Language Models (LLMs). The application uses Ollama for LLM inference and provides a chat interface that can interact with various MCP-enabled tools.
+
+## Features
+
+- Chat interface with streaming responses
+- Integration with Ollama LLM backend
+- MCP client tools for enhanced capabilities
+- Real-time tool invocation and response streaming
+
+## Prerequisites
+
+- Node.js 18+ installed
+- Ollama running locally (default: http://localhost:11434)
+- MCP server filesystem service
 
 ## Getting Started
 

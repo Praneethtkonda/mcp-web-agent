@@ -1,35 +1,33 @@
 import { createOllama } from 'ollama-ai-provider';
-import { streamText, tool } from 'ai';
-import { z } from 'zod';
+import { streamText } from 'ai';
+
+import { getMCPTools, closeMCPClients } from '@/app/tools/mcpTools';
+import { getGenericTools } from '@/app/tools/genericTools';
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
-
 
 const ollama = createOllama({
     baseURL: 'http://localhost:11434/api',
 });
 
+// Initialize tools once at module level
+let mcpToolsPromise = getMCPTools();
+const genericTools = getGenericTools();
+
 export async function POST(req: Request) {
     const { messages } = await req.json();
+    const mcpTools = await mcpToolsPromise;
 
     const result = streamText({
         model: ollama('qwen3:0.6b', {simulateStreaming: true}),
         messages,
         tools: {
-            weather: tool({
-                description: 'Get the weather in a location (fahrenheit)',
-                parameters: z.object({
-                    location: z.string().describe('The location to get the weather for'),
-                }),
-                execute: async ({ location }) => {
-                    const temperature = Math.round(Math.random() * (90 - 32) + 32);
-                    return {
-                        location,
-                        temperature,
-                    };
-                },
-            }),
+            ...mcpTools,
+            ...genericTools
+        },
+        onStepFinish: async (result) => {
+            console.log(result);
         },
         maxSteps: 10,
         toolCallStreaming: true,
